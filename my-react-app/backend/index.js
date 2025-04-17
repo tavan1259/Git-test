@@ -74,3 +74,15 @@ const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
+
+const verifyCaptcha = async (captchaToken) => {
+  const secret = process.env.RECAPTCHA_SECRET;
+  const res = await fetch(`https://www.google.com/recaptcha/api/siteverify`, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: `secret=${secret}&response=${captchaToken}`
+  });
+
+  const data = await res.json();
+  return data.success;
+};
