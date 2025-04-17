@@ -5,44 +5,47 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleLogin = async () => {
+    try {
+      const response = await fetch("http://localhost:3000/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+      });
 
-    // ตัวอย่างตรวจสอบแบบง่าย
-    if (username === "admin" && password === "1234") {
-      setMessage("เข้าสู่ระบบสำเร็จ!");
-    } else {
-      setMessage("ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง");
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage("✅ เข้าสู่ระบบสำเร็จ");
+        localStorage.setItem("token", data.token); // เก็บ token ไว้ใช้งานภายหลัง
+      } else {
+        setMessage("❌ " + data.message);
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      setMessage("⚠️ เกิดข้อผิดพลาดในการเชื่อมต่อ");
     }
   };
 
   return (
-    <div style={{ maxWidth: "400px", margin: "50px auto", padding: "20px", border: "1px solid #ccc", borderRadius: "10px" }}>
+    <div style={{ maxWidth: "400px", margin: "auto", padding: "20px" }}>
       <h2>เข้าสู่ระบบ</h2>
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: "10px" }}>
-          <label>ชื่อผู้ใช้:</label><br />
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-            style={{ width: "100%", padding: "8px" }}
-          />
-        </div>
-        <div style={{ marginBottom: "10px" }}>
-          <label>รหัสผ่าน:</label><br />
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            style={{ width: "100%", padding: "8px" }}
-          />
-        </div>
-        <button type="submit" style={{ padding: "10px 20px" }}>เข้าสู่ระบบ</button>
-      </form>
-      {message && <p style={{ marginTop: "15px", color: message.includes("สำเร็จ") ? "green" : "red" }}>{message}</p>}
+      <input
+        type="text"
+        placeholder="ชื่อผู้ใช้"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+        style={{ width: "100%", marginBottom: "10px" }}
+      />
+      <input
+        type="password"
+        placeholder="รหัสผ่าน"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        style={{ width: "100%", marginBottom: "10px" }}
+      />
+      <button onClick={handleLogin}>เข้าสู่ระบบ</button>
+      <p>{message}</p>
     </div>
   );
 };
