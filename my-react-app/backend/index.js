@@ -70,10 +70,11 @@ app.post("/register", async (req, res) => {
 });
 
 // เริ่มเซิร์ฟเวอร์
-const PORT = process.env.PORT || 4000 ;
-app.listen(PORT, () => {
-  console.log(`🚀 Server running at http://localhost:${PORT}`);
+const port = process.env.PORT || 4000;
+app.listen(port, '0.0.0.0', () => {
+  console.log(`Server is running on port ${port}`);
 });
+
 
 const verifyCaptcha = async (captchaToken) => {
   const secret = process.env.RECAPTCHA_SECRET;
